@@ -50,5 +50,8 @@ typedef struct {
 int isDuplicate(Cache *cacheData, int numCachesLoaded, char *code);
 void loadCachesFromFile(Cache *cacheData, int *numCachesLoaded, char *fileman);
 void clearCacheData(Cache *cacheData, int *numCachesLoaded);
+void displayCache(Cache cache);
+float calculateFoundPercentage(Cache cache);
+void displayCacheWithFoundPercentage(Cache cache);
 
 #endif /*CACHE_H*/
