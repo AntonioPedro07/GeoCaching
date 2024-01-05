@@ -44,7 +44,7 @@ int main() {
         } else {
             printf("List of loaded caches with found percentage:\n");
             printf("------------------------------------------------------------\n");
-            printf("| Found% | Code | Name | State | Owner | Latitude | Longitude | Kind | Size | Difficulty | Terrain | Status | Hidden Date | Founds | Not Founds  | Favourites | Altitude |\n");
+            printf("| Found% | Code | Name | State | Owner | Latitude | Longitude | Kind | Size | Difficulty | Terrain | Status | Hidden Date | Founds | Not Founds | Favourites | Altitude |\n");
             printf("------------------------------------------------------------\n");
             for (int i = 0; i < numCachesLoaded; i++) {
                 displayCacheWithFoundPercentage(cacheData[i]);

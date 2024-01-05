@@ -14,31 +14,36 @@ int isDuplicate(Cache *cacheData, int numCachesLoaded, char *code){
     return 0;
 }
 
-void loadCachesFromFile(Cache *cacheData, int *numCachesLoaded, char *fileman){
+void loadCachesFromFile(Cache *cacheData, int *numCachesLoaded, char *fileman) {
     FILE *file = fopen(fileman, "r");
-    setlocale(LC_ALL, "pt-BR");
-    if(file == NULL){
+    if (file == NULL) {
         printf("ERROR!! Ficheiro nao encontrado\n");
         return;
     }
 
-    char tempCode[20];
-    while(fscanf(file, "%s %s %s %s %lf", tempCode, cacheData[*numCachesLoaded].owner, 
-        cacheData[*numCachesLoaded].status, cacheData[*numCachesLoaded].hidden_date, 
-        &cacheData[*numCachesLoaded].altitude) != EOF){
-            if(!isDuplicate(cacheData, *numCachesLoaded, tempCode)){
-                strcpy(cacheData[*numCachesLoaded].code, tempCode);
-                (*numCachesLoaded++);
+    while (fscanf(file, "%s %s %s %s %lf %lf %d %d %d %d %d %s %d %d %d %lf", cacheData[*numCachesLoaded].code,
+                  cacheData[*numCachesLoaded].name, cacheData[*numCachesLoaded].state, cacheData[*numCachesLoaded].owner,
+                  &cacheData[*numCachesLoaded].latitude, &cacheData[*numCachesLoaded].longitude, 
+                  (int *)&cacheData[*numCachesLoaded].kind, (int *)&cacheData[*numCachesLoaded].size,
+                  &cacheData[*numCachesLoaded].difficulty, &cacheData[*numCachesLoaded].terrain,
+                  (int *)&cacheData[*numCachesLoaded].status, cacheData[*numCachesLoaded].hidden_date,
+                  &cacheData[*numCachesLoaded].founds, &cacheData[*numCachesLoaded].not_founds,
+                  &cacheData[*numCachesLoaded].favourites, &cacheData[*numCachesLoaded].altitude) != EOF) {
+        char tempCode[20];
+        strcpy(tempCode, cacheData[*numCachesLoaded].code);
 
-                if(*numCachesLoaded >= MAX_CACHES){
-                    printf("Limite maxima de capacidade alcacanda.\n");
-                    break;
-                }
+        if (!isDuplicate(cacheData, *numCachesLoaded, tempCode)) {
+            (*numCachesLoaded)++;
+
+            if (*numCachesLoaded >= MAX_CACHES) {
+                printf("Limite maxima de capacidade alcacanda.\n");
+                break;
             }
+        }
     }
 
     fclose(file);
-    printf("<%d cache unica carregada>\n", numCachesLoaded);
+    printf("<%d cache unica carregada>\n", *numCachesLoaded);
 }
 
 void clearCacheData(Cache *cacheData, int *numCachesLoaded){
