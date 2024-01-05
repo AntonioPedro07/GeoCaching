@@ -1,16 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <windows.h>
-#include "cache.h"
+#include "input.h"
 
 int main() {
 
-    Cache cacheData[MAX_CACHES];
-    int numCachesLoaded = 0;
+    // TODO: implement menu and call subprograms for each operation
 
-    loadCachesFromFile(cacheData, &numCachesLoaded, "caches_all.csv");
-    clearCacheData(cacheData, &numCachesLoaded);
+    printf("I'm missing a menu! :( \n");
 
-    return 0;
+    return EXIT_SUCCESS;
 }
 
