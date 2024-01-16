@@ -13,15 +13,32 @@ int main() {
     char command[20];
 
     while (running) {
+        printf("\n\n\t\t\t ============== Geo Caching ==============");
+        printf("\n\t\t\t ============== Main Menu ==============");
+        printf("\n\t\t\t =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
+        printf("\n\t\t | [1] - Load    |");
+        printf("\n\t\t | [2] - Clear   |");
+        printf("\n\t\t | [3] - Quit    |");
+        printf("\n\t\t | [4] - List    |");
+        printf("\n\t\t | [5] - FoundP  |");
+        printf("\n\t\t | [6] - Search  |");
+        printf("\n\t\t | [7] - Edit    |");
+        printf("\n\t\t | [8] - Center  |");
+        printf("\n\t\t | [9] - Age     |");
+        printf("\n\t\t | [10] - Sort   |");
+        printf("\n\t\t | [11] - Statec |");
+        printf("\n\t\t | [12] - M81    |");
+        printf("\n\t\t | [13] - Save   |");
+        printf("\n\t\t\t =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
         printf("Enter a command: ");
         scanf("%s", command);
 
         // Switch case para lidar com diferentes comandos
-        if (strcmp(command, "LOAD") == 0) {
+        if (strcmp(command, "LOAD") == 0 || strcmp(command, "load") == 0 || strcmp(command, "1") == 0) {
             printf("Enter file name: ");
             scanf("%s", filename);
             loadCachesFromFile(cacheData, &numCachesLoaded, filename);
-        } else if (strcmp(command, "CLEAR") == 0) {
+        } else if (strcmp(command, "CLEAR") == 0 || strcmp(command, "clear") == 0 || strcmp(command, "2") == 0) {
             clearCacheData(cacheData, &numCachesLoaded);
         } else if (strcmp(command, "QUIT") == 0) {
             running = 0;
@@ -60,7 +77,14 @@ int main() {
         } else if (strcmp(command, "AGE") == 0) {
             // Implementar lógica para o comando AGE
         } else if (strcmp(command, "SORT") == 0) {
-            // Implementar lógica para o comando SORT
+            int sortCriteria;
+            printf("Enter sorting criteria (1-Altitude, 2-State, 3-Hidden Date): ");
+            scanf("%d", &sortCriteria);
+
+            sortCaches(cacheData, numCachesLoaded, sortCriteria);
+            // A cacheData está ordenada com base no critério escolhido
+
+            // Podesse imprimir ou realizar outras operações com os dados ordenados
         } else if (strcmp(command, "STATEC") == 0) {
             // Implementar lógica para o comando STATEC
         } else if (strcmp(command, "M81") == 0) {
