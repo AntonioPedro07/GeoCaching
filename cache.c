@@ -104,3 +104,32 @@ void sortCaches(Cache *cacheData, int numCachesLoaded, int criteria){
             break;
     }
 }
+
+void showCacheCountByState(Cache *cacheData, int numCachesLoaded){
+    // Arrays para armazenar as contagens por distrito e estado
+    int countByState[MAX_STATES][2] = {0};
+
+    for (int i = 0; i < numCachesLoaded; i++) {
+        int stateIndex = getStateIndex(cacheData[i].state);
+
+        if (stateIndex != -1) {
+            // Incrementa a contagem correspondente ao distrito e estado da cache
+            countByState[stateIndex][cacheData[i].status]++; 
+        }
+    }
+
+    // Imprime as contagens
+    printf("State\tAvailable\tDisabled\n");
+    for (int i = 0; i < MAX_STATES; i++) {
+        printf("%s\t%d\t\t%d\n", stateNames[i], countByState[i][AVAILABLE], countByState[i][DISABLED]);
+    }
+}
+
+int getStateIndex(char *state) {
+    for (int i = 0; i < MAX_STATES; i++) {
+        if (strcmp(state, stateNames[i]) == 0) {
+            return i;
+        }
+    }
+    return -1; // Retorna -1 se o estado não for encontrado
+}
