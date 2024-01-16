@@ -133,3 +133,24 @@ int getStateIndex(char *state) {
     }
     return -1; // Retorna -1 se o estado não for encontrado
 }
+
+void calculateMatrix81(Cache *cacheData, int numCachesLoaded, int matrix81[9][9]) {
+    for (int i = 0; i < numCachesLoaded; i++) {
+        int terrainIndex = (int)cacheData[i].terrain - 1; // Indices de 0 a 4
+        int difficultyIndex = (int)cacheData[i].difficulty - 1; // Indices de 0 a 4
+
+        // Incrementa a contagem para a combinação de terreno/dificuldade
+        matrix81[terrainIndex][difficultyIndex]++;
+    }
+}
+
+// Função para imprimir a matriz 81
+void printMatrix81(int matrix81[9][9]) {
+    printf("Matrix 81:\n");
+    for (int i = 0; i < 9; i++) {
+        for (int j = 0; j < 9; j++) {
+            printf("%d\t", matrix81[i][j]);
+        }
+        printf("\n");
+    }
+}

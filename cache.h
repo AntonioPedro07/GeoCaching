@@ -58,5 +58,6 @@ float calculateFoundPercentage(Cache cache);
 void displayCacheWithFoundPercentage(Cache cache);
 void sortCaches(Cache *cacheData, int numCachesLoaded, int criteria);
 void showCacheCountByState(Cache *cacheData, int numCachesLoaded);
+void calculateMatrix81(Cache *cacheData, int numCachesLoaded, int matrix81[9][9]);
 
 #endif /*CACHE_H*/
