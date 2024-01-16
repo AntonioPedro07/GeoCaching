@@ -40,9 +40,9 @@ int main() {
             loadCachesFromFile(cacheData, &numCachesLoaded, filename);
         } else if (strcmp(command, "CLEAR") == 0 || strcmp(command, "clear") == 0 || strcmp(command, "2") == 0) {
             clearCacheData(cacheData, &numCachesLoaded);
-        } else if (strcmp(command, "QUIT") == 0) {
+        } else if (strcmp(command, "QUIT") == 0 || strcmp(command, "quit") == 0 || strcmp(command, "3") == 0) {
             running = 0;
-        } else if (strcmp(command, "LIST") == 0) {
+        } else if (strcmp(command, "LIST") == 0 || strcmp(command, "list") == 0 || strcmp(command, "4") == 0) {
            if (numCachesLoaded == 0) {
             printf("<No cache data>\n");
         } else {
@@ -55,7 +55,7 @@ int main() {
             }
             printf("------------------------------------------------------------\n");
         }
-        } else if (strcmp(command, "FOUNDP") == 0) {
+        } else if (strcmp(command, "FOUNDP") == 0 || strcmp(command, "foundp") == 0 || strcmp(command, "5") == 0) {
             if (numCachesLoaded == 0) {
             printf("<No cache data>\n");
         } else {
@@ -68,15 +68,15 @@ int main() {
             }
             printf("------------------------------------------------------------\n");
         }
-        } else if (strcmp(command, "SEARCH") == 0) {
+        } else if (strcmp(command, "SEARCH") == 0 || strcmp(command, "search") == 0 || strcmp(command, "6") == 0) {
             // Implementar lógica para o comando SEARCH
-        } else if (strcmp(command, "EDIT") == 0) {
+        } else if (strcmp(command, "EDIT") == 0 || strcmp(command, "edit") == 0 || strcmp(command, "7") == 0) {
             // Implementar lógica para o comando EDIT
-        } else if (strcmp(command, "CENTER") == 0) {
+        } else if (strcmp(command, "CENTER") == 0 || strcmp(command, "center") == 0 || strcmp(command, "8") == 0) {
             // Implementar lógica para o comando CENTER
-        } else if (strcmp(command, "AGE") == 0) {
+        } else if (strcmp(command, "AGE") == 0 || strcmp(command, "age") == 0 || strcmp(command, "9") == 0) {
             // Implementar lógica para o comando AGE
-        } else if (strcmp(command, "SORT") == 0) {
+        } else if (strcmp(command, "SORT") == 0 || strcmp(command, "sort") == 0 || strcmp(command, "10") == 0) {
             int sortCriteria;
             printf("Enter sorting criteria (1-Altitude, 2-State, 3-Hidden Date): ");
             scanf("%d", &sortCriteria);
@@ -85,11 +85,11 @@ int main() {
             // A cacheData está ordenada com base no critério escolhido
 
             // Podesse imprimir ou realizar outras operações com os dados ordenados
-        } else if (strcmp(command, "STATEC") == 0) {
+        } else if (strcmp(command, "STATEC") == 0 || strcmp(command, "statec") == 0 || strcmp(command, "11") == 0) {
             // Implementar lógica para o comando STATEC
-        } else if (strcmp(command, "M81") == 0) {
+        } else if (strcmp(command, "M81") == 0 || strcmp(command, "m81") == 0 || strcmp(command, "12") == 0) {
             // Implementar lógica para o comando M81
-        } else if (strcmp(command, "SAVE") == 0) {
+        } else if (strcmp(command, "SAVE") == 0 || strcmp(command, "save") == 0 || strcmp(command, "13") == 0) {
             // Implementar lógica para o comando SAVE
         } else {
             printf("Command not recognized.\n");
