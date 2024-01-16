@@ -2,6 +2,7 @@
 #define CACHE_H
 
 #define MAX_CACHES 2000
+#define MAX_STATES 20
 
 typedef enum {
     EARTHCACHE,
@@ -47,6 +48,8 @@ typedef struct {
     double altitude;
 } Cache;
 
+extern const char *stateNames[MAX_STATES];
+
 int isDuplicate(Cache *cacheData, int numCachesLoaded, char *code);
 void loadCachesFromFile(Cache *cacheData, int *numCachesLoaded, char *fileman);
 void clearCacheData(Cache *cacheData, int *numCachesLoaded);
@@ -54,5 +57,6 @@ void displayCache(Cache cache);
 float calculateFoundPercentage(Cache cache);
 void displayCacheWithFoundPercentage(Cache cache);
 void sortCaches(Cache *cacheData, int numCachesLoaded, int criteria);
+void showCacheCountByState(Cache *cacheData, int numCachesLoaded);
 
 #endif /*CACHE_H*/
