@@ -154,3 +154,44 @@ void printMatrix81(int matrix81[9][9]) {
         printf("\n");
     }
 }
+
+// Função para verificar se um ficheiro já existe
+int fileExists(const char *filename) {
+    FILE *file = fopen(filename, "r");
+    if (file != NULL) {
+        fclose(file);
+        return 1; // Retorna verdadeiro se o ficheiro existe
+    }
+    return 0; // Retorna falso se o ficheiro não existe
+}
+
+// Função para salvar as caches em formato CSV
+void saveCachesToFile(Cache *cacheData, int numCachesLoaded) {
+    char filename[50];
+
+    // Solicita ao utilizador o nome do ficheiro
+    printf("Enter the filename for saving: ");
+    scanf("%s", filename);
+
+    // Verifica se o ficheiro já existe
+    if (fileExists(filename)) {
+        printf("File '%s' already exists. Save operation aborted.\n", filename);
+        return;
+    }
+
+    // Abre o ficheiro para escrita
+    FILE *file = fopen(filename, "w");
+    if (file == NULL) {
+        printf("Error opening file for writing.\n");
+        return;
+    }
+
+    // Escreve as informações das caches no ficheiro CSV
+    for (int i = 0; i < numCachesLoaded; i++) {
+        fprintf(file, "%s,%s,%s,%s,%lf\n", cacheData[i].code, cacheData[i].owner, cacheData[i].status,
+                cacheData[i].hidden_date, cacheData[i].altitude);
+    }
+
+    fclose(file);
+    printf("Caches saved to '%s' successfully.\n", filename);
+}
