@@ -88,9 +88,9 @@ int main() {
         } else if (strcmp(command, "STATEC") == 0 || strcmp(command, "statec") == 0 || strcmp(command, "11") == 0) {
             showCacheCountByState(cacheData, numCachesLoaded);
         } else if (strcmp(command, "M81") == 0 || strcmp(command, "m81") == 0 || strcmp(command, "12") == 0) {
-            // Implementar lógica para o comando M81
+            
         } else if (strcmp(command, "SAVE") == 0 || strcmp(command, "save") == 0 || strcmp(command, "13") == 0) {
-            // Implementar lógica para o comando SAVE
+            saveCachesToFile(cacheData, numCachesLoaded);
         } else {
             printf("Command not recognized.\n");
         }
