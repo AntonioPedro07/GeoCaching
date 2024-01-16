@@ -53,5 +53,6 @@ void clearCacheData(Cache *cacheData, int *numCachesLoaded);
 void displayCache(Cache cache);
 float calculateFoundPercentage(Cache cache);
 void displayCacheWithFoundPercentage(Cache cache);
+void sortCaches(Cache *cacheData, int numCachesLoaded, int criteria);
 
 #endif /*CACHE_H*/

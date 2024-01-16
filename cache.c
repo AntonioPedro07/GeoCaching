@@ -69,3 +69,38 @@ void displayCacheWithFoundPercentage(Cache cache) {
     printf("%.2f%% | Code: %s | Name: %s | State: %s | Owner: %s | ... | Favourites: %d | Altitude: %lf\n",
         foundPercentage, cache.code, cache.name, cache.state, cache.owner, cache.favourites, cache.altitude);
 }
+
+int compareByAltitude(const void *a, const void *b){
+    return (*(Cache *)b).altitude - (*(Cache *)a).altitude;
+}
+
+int compareByStateAndFounds(const void *a, const void *b){
+    int result = strcmp((*(Cache *)a).state, (*(Cache *)b).state);
+
+    if(result == 0){
+        return (*(Cache *)b).founds - (*(Cache *)a).founds;
+    }
+
+    return result;
+}
+
+int compareByHiddenDate(const void *a, const void *b){
+    return strcmp((*(Cache *)b).hidden_date, (*(Cache *)a).hidden_date);
+}
+
+void sortCaches(Cache *cacheData, int numCachesLoaded, int criteria){
+    switch (criteria) {
+        case 1:
+            qsort(cacheData, numCachesLoaded, sizeof(Cache), compareByAltitude);
+            break;
+        case 2:
+            qsort(cacheData, numCachesLoaded, sizeof(Cache), compareByStateAndFounds);
+            break;
+        case 3:
+            qsort(cacheData, numCachesLoaded, sizeof(Cache), compareByHiddenDate);
+            break;
+        default:
+            printf("Invalid sorting criteria.\n");
+            break;
+    }
+}
