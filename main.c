@@ -13,9 +13,9 @@ int main() {
     char command[20];
 
     while (running) {
-        printf("\n\n\t\t\t ============== Geo Caching ==============");
-        printf("\n\t\t\t ============== Main Menu ==============");
-        printf("\n\t\t\t =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
+        printf("\n\n\t\t ============== Geo Caching ==============");
+        printf("\n\t\t ============== Main Menu ================");
+        printf("\n\t\t =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
         printf("\n\n\t\t | [1] - Load    |");
         printf("\n\n\t\t | [2] - Clear   |");
         printf("\n\n\t\t | [3] - Quit    |");
@@ -30,7 +30,7 @@ int main() {
         printf("\n\n\t\t | [12] - M81    |");
         printf("\n\n\t\t | [13] - Save   |");
         printf("\n\n\t\t\t =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
-        printf("Enter a command: ");
+        printf("\n\n\t\tEnter a command: ");
         scanf("%s", command);
 
         // Switch case para lidar com diferentes comandos

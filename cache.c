@@ -17,18 +17,38 @@ int isDuplicate(Cache *cacheData, int numCachesLoaded, char *code){
 void loadCachesFromFile(Cache *cacheData, int *numCachesLoaded, char *fileman) {
     FILE *file = fopen(fileman, "r");
     if (file == NULL) {
-        printf("ERROR!! Ficheiro nao encontrado\n");
+        printf("ERROR!! Ficheiro nao encontrado: %s\n", fileman);
         return;
+    }else{
+        printf("Ficheiro aberto com sucesso: %s\n", fileman);
     }
 
-    while (fscanf(file, "%s %s %s %s %lf %lf %d %d %d %d %d %s %d %d %d %lf", cacheData[*numCachesLoaded].code,
-                  cacheData[*numCachesLoaded].name, cacheData[*numCachesLoaded].state, cacheData[*numCachesLoaded].owner,
-                  &cacheData[*numCachesLoaded].latitude, &cacheData[*numCachesLoaded].longitude, 
-                  (int *)&cacheData[*numCachesLoaded].kind, (int *)&cacheData[*numCachesLoaded].size,
-                  &cacheData[*numCachesLoaded].difficulty, &cacheData[*numCachesLoaded].terrain,
-                  (int *)&cacheData[*numCachesLoaded].status, cacheData[*numCachesLoaded].hidden_date,
-                  &cacheData[*numCachesLoaded].founds, &cacheData[*numCachesLoaded].not_founds,
-                  &cacheData[*numCachesLoaded].favourites, &cacheData[*numCachesLoaded].altitude) != EOF) {
+    // Descarta a primeira linha (nomes dos campos)
+    char temp[100];
+    fgets(temp, sizeof(temp), file);
+
+    while (fscanf(file, "%s %s %s %s %lf %lf %d %d %d %d %d %s %d %d %d %lf", 
+                cacheData[*numCachesLoaded].code,
+                  cacheData[*numCachesLoaded].name,
+                  cacheData[*numCachesLoaded].state,
+                  cacheData[*numCachesLoaded].owner,
+                  &cacheData[*numCachesLoaded].latitude,
+                  &cacheData[*numCachesLoaded].longitude,
+                  (int *)&cacheData[*numCachesLoaded].kind,
+                  (int *)&cacheData[*numCachesLoaded].size,
+                  &cacheData[*numCachesLoaded].difficulty,
+                  &cacheData[*numCachesLoaded].terrain,
+                  (int *)&cacheData[*numCachesLoaded].status,
+                  cacheData[*numCachesLoaded].hidden_date,
+                  &cacheData[*numCachesLoaded].founds,
+                  &cacheData[*numCachesLoaded].not_founds,
+                  &cacheData[*numCachesLoaded].favourites,
+                  &cacheData[*numCachesLoaded].altitude) == 16) {
+
+        // Adicione mensagens de depuração
+        printf("Loaded cache: %s, %s, %s\n", cacheData[*numCachesLoaded].code,
+               cacheData[*numCachesLoaded].name, cacheData[*numCachesLoaded].state);
+            
         char tempCode[20];
         strcpy(tempCode, cacheData[*numCachesLoaded].code);
 
