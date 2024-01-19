@@ -105,7 +105,7 @@ void sortCaches(Cache *cacheData, int numCachesLoaded, int criteria){
     }
 }
 
-void showCacheCountByState(Cache *cacheData, int numCachesLoaded){
+/*void showCacheCountByState(Cache *cacheData, int numCachesLoaded){
     // Arrays para armazenar as contagens por distrito e estado
     int countByState[MAX_STATES][2] = {0};
 
@@ -132,7 +132,7 @@ int getStateIndex(char *state) {
         }
     }
     return -1; // Retorna -1 se o estado não for encontrado
-}
+}*/
 
 void calculateMatrix81(Cache *cacheData, int numCachesLoaded, int matrix81[9][9]) {
     for (int i = 0; i < numCachesLoaded; i++) {

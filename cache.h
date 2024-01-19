@@ -48,7 +48,7 @@ typedef struct {
     double altitude;
 } Cache;
 
-extern const char *stateNames[MAX_STATES];
+/*extern const char *stateNames[MAX_STATES];*/
 
 int isDuplicate(Cache *cacheData, int numCachesLoaded, char *code);
 void loadCachesFromFile(Cache *cacheData, int *numCachesLoaded, char *fileman);

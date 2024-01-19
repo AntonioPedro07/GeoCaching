@@ -16,20 +16,20 @@ int main() {
         printf("\n\n\t\t\t ============== Geo Caching ==============");
         printf("\n\t\t\t ============== Main Menu ==============");
         printf("\n\t\t\t =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
-        printf("\n\t\t | [1] - Load    |");
-        printf("\n\t\t | [2] - Clear   |");
-        printf("\n\t\t | [3] - Quit    |");
-        printf("\n\t\t | [4] - List    |");
-        printf("\n\t\t | [5] - FoundP  |");
-        printf("\n\t\t | [6] - Search  |");
-        printf("\n\t\t | [7] - Edit    |");
-        printf("\n\t\t | [8] - Center  |");
-        printf("\n\t\t | [9] - Age     |");
-        printf("\n\t\t | [10] - Sort   |");
-        printf("\n\t\t | [11] - Statec |");
-        printf("\n\t\t | [12] - M81    |");
-        printf("\n\t\t | [13] - Save   |");
-        printf("\n\t\t\t =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
+        printf("\n\n\t\t | [1] - Load    |");
+        printf("\n\n\t\t | [2] - Clear   |");
+        printf("\n\n\t\t | [3] - Quit    |");
+        printf("\n\n\t\t | [4] - List    |");
+        printf("\n\n\t\t | [5] - FoundP  |");
+        printf("\n\n\t\t | [6] - Search  |");
+        printf("\n\n\t\t | [7] - Edit    |");
+        printf("\n\n\t\t | [8] - Center  |");
+        printf("\n\n\t\t | [9] - Age     |");
+        printf("\n\n\t\t | [10] - Sort   |");
+        printf("\n\n\t\t | [11] - Statec |");
+        printf("\n\n\t\t | [12] - M81    |");
+        printf("\n\n\t\t | [13] - Save   |");
+        printf("\n\n\t\t\t =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
         printf("Enter a command: ");
         scanf("%s", command);
 
@@ -86,7 +86,7 @@ int main() {
 
             // Podesse imprimir ou realizar outras operações com os dados ordenados
         } else if (strcmp(command, "STATEC") == 0 || strcmp(command, "statec") == 0 || strcmp(command, "11") == 0) {
-            showCacheCountByState(cacheData, numCachesLoaded);
+            //showCacheCountByState(cacheData, numCachesLoaded);
         } else if (strcmp(command, "M81") == 0 || strcmp(command, "m81") == 0 || strcmp(command, "12") == 0) {
             
         } else if (strcmp(command, "SAVE") == 0 || strcmp(command, "save") == 0 || strcmp(command, "13") == 0) {
