@@ -19,7 +19,7 @@ void loadCachesFromFile(Cache *cacheData, int *numCachesLoaded, char *fileman) {
     if (file == NULL) {
         printf("ERROR!! Ficheiro nao encontrado: %s\n", fileman);
         return;
-    }else{
+    } else {
         printf("Ficheiro aberto com sucesso: %s\n", fileman);
     }
 
@@ -27,8 +27,8 @@ void loadCachesFromFile(Cache *cacheData, int *numCachesLoaded, char *fileman) {
     char temp[100];
     fgets(temp, sizeof(temp), file);
 
-    while (fscanf(file, "%s %s %s %s %lf %lf %d %d %d %d %d %s %d %d %d %lf", 
-                cacheData[*numCachesLoaded].code,
+    while (fscanf(file, "%s %s %s %s %lf %lf %d %d %d %d %d %s %d %d %d %lf",
+                  cacheData[*numCachesLoaded].code,
                   cacheData[*numCachesLoaded].name,
                   cacheData[*numCachesLoaded].state,
                   cacheData[*numCachesLoaded].owner,
@@ -48,7 +48,7 @@ void loadCachesFromFile(Cache *cacheData, int *numCachesLoaded, char *fileman) {
         // Adicione mensagens de depuração
         printf("Loaded cache: %s, %s, %s\n", cacheData[*numCachesLoaded].code,
                cacheData[*numCachesLoaded].name, cacheData[*numCachesLoaded].state);
-            
+
         char tempCode[20];
         strcpy(tempCode, cacheData[*numCachesLoaded].code);
 
