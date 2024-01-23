@@ -61,6 +61,8 @@ void calculateMatrix81(Cache *cacheData, int numCachesLoaded, int matrix81[9][9]
 
 extern void saveCachesToFile(Cache cacheData[], int numCachesLoaded);
 extern const char *stateNames[];
+const char* cacheSizeToString(CacheSize size);
+const char* cacheStatusToString(CacheStatus status);
 
 
 #endif /*CACHE_H*/

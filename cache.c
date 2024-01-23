@@ -14,69 +14,105 @@ int isDuplicate(Cache *cacheData, int numCachesLoaded, char *code){
     return 0;
 }
 
-void loadCachesFromFile(Cache *cacheData, int *numCachesLoaded, char *filename) {
-    FILE *file = fopen(filename, "r");
+void loadCachesFromFile(Cache *cacheData, int *numCachesLoaded, char *fileman) {
+    FILE *file = fopen(fileman, "r");
     if (file == NULL) {
-        printf("ERROR!! Ficheiro nao encontrado: %s\n", filename);
+        printf("ERROR!! Ficheiro nao encontrado\n");
         return;
-    } else {
-        printf("Ficheiro aberto com sucesso: %s\n", filename);
     }
 
-    // Ignora a primeira linha (nomes dos campos)
-    char temp[256];
-    fgets(temp, sizeof(temp), file);
-
-    // Leitura dos dados
-    while (fscanf(file, "%19[^,],%99[^,],%49[^,],%49[^,],%lf,%lf,%d,%d,%d,%d,%d,%19[^,],%d,%d,%d,%lf",
-                  cacheData[*numCachesLoaded].code,
-                  cacheData[*numCachesLoaded].name,
-                  cacheData[*numCachesLoaded].state,
-                  cacheData[*numCachesLoaded].owner,
-                  &cacheData[*numCachesLoaded].latitude,
-                  &cacheData[*numCachesLoaded].longitude,
-                  (int *)&cacheData[*numCachesLoaded].kind,
-                  (int *)&cacheData[*numCachesLoaded].size,
-                  &cacheData[*numCachesLoaded].difficulty,
-                  &cacheData[*numCachesLoaded].terrain,
-                  (int *)&cacheData[*numCachesLoaded].status,
-                  cacheData[*numCachesLoaded].hidden_date,
-                  &cacheData[*numCachesLoaded].founds,
-                  &cacheData[*numCachesLoaded].not_founds,
-                  &cacheData[*numCachesLoaded].favourites,
-                  &cacheData[*numCachesLoaded].altitude) == 16) {
-
-        (*numCachesLoaded)++;
-
-        // Adicione mensagens de depuração
-        printf("Loaded cache: %s, %s, %s\n", cacheData[*numCachesLoaded].code,
-               cacheData[*numCachesLoaded].name, cacheData[*numCachesLoaded].state);
-
-        char tempCode[20];
-        strcpy(tempCode, cacheData[*numCachesLoaded].code);
-
-        if (!isDuplicate(cacheData, *numCachesLoaded, tempCode)) {
-            (*numCachesLoaded)++;
-
-            if (*numCachesLoaded >= MAX_CACHES) {
-                printf("Limite maxima de capacidade alcacanda.\n");
-                break;
-            }
-        }
+while (fscanf(file, "%19[^,],%99[^,],%49[^,],%49[^,],%lf,%lf,%d,%d,%d,%d,%d,%19[^,],%d,%d,%d,%lf",
+              cacheData[*numCachesLoaded].code,
+              cacheData[*numCachesLoaded].name,
+              cacheData[*numCachesLoaded].state,
+              cacheData[*numCachesLoaded].owner,
+              &cacheData[*numCachesLoaded].latitude,
+              &cacheData[*numCachesLoaded].longitude,
+              (int *)&cacheData[*numCachesLoaded].kind,
+              (int *)&cacheData[*numCachesLoaded].size,
+              &cacheData[*numCachesLoaded].difficulty,
+              &cacheData[*numCachesLoaded].terrain,
+              (int *)&cacheData[*numCachesLoaded].status,
+              cacheData[*numCachesLoaded].hidden_date,
+              &cacheData[*numCachesLoaded].founds,
+              &cacheData[*numCachesLoaded].not_founds,
+              &cacheData[*numCachesLoaded].favourites,
+              &cacheData[*numCachesLoaded].altitude) != EOF) {
+    
+    printf("Loaded: %s\n", cacheData[*numCachesLoaded].code);
+ 
+    (*numCachesLoaded)++;
+ 
+    if (*numCachesLoaded >= MAX_CACHES) {
+        printf("Limite máximo de capacidade atingido.\n");
+        break;
     }
+}
 
     fclose(file);
     printf("<%d cache unica carregada>\n", *numCachesLoaded);
 }
+
 
 void clearCacheData(Cache *cacheData, int *numCachesLoaded){
     *numCachesLoaded = 0;
     printf("Data cache limpa.\n");
 }
 
+const char* cacheKindToString(CacheKind kind) {
+    switch (kind) {
+        case EARTHCACHE: return "EARTHCACHE";
+        case LETTERBOX: return "LETTERBOX";
+        case MULTI: return "MULTI";
+        case PUZZLE: return "PUZZLE";
+        case TRADITIONAL: return "TRADITIONAL";
+        case VIRTUAL: return "VIRTUAL";
+        case WEBCAM: return "WEBCAM";
+        // Adicione mais casos conforme necessário
+        default: return "UNKNOWN";
+    }
+}
+
+const char* cacheSizeToString(CacheSize size) {
+    switch (size) {
+        case MICRO:
+            return "MICRO";
+        case SMALL:
+            return "SMALL";
+        case REGULAR:
+            return "REGULAR";
+        case LARGE:
+            return "LARGE";
+        case OTHER_SIZE:
+            return "OTHER_SIZE";
+        case VIRTUAL_SIZE:
+            return "VIRTUAL_SIZE";
+        case NOT_CHOSEN_SIZE:
+            return "NOT_CHOSEN_SIZE";
+        // Adicione outros casos conforme necessário
+        default:
+            return "UNKNOWN_SIZE";
+    }
+}
+
+const char* cacheStatusToString(CacheStatus status) {
+    switch (status) {
+        case AVAILABLE:
+            return "AVAILABLE";
+        case DISABLED:
+            return "DISABLED";
+        // Adicione outros casos conforme necessário
+        default:
+            return "UNKNOWN_STATUS";
+    }
+}
+
 void displayCache(Cache cache) {
-    printf("Code: %s | Name: %s | State: %s | Owner: %s | Latitude: %lf | Longitude: %lf | Kind: %d | Size: %d | Difficulty: %d | Terrain: %d | Status: %d | Hidden Date: %s | Founds: %d | Not Founds: %d | Favourites: %d | Altitude: %lf\n",
-        cache.code, cache.name, cache.state, cache.owner, cache.latitude, cache.longitude, cache.kind, cache.size, cache.difficulty, cache.terrain, cache.status, cache.hidden_date, cache.founds, cache.not_founds, cache.favourites, cache.altitude);
+    printf("Code: %s | Name: %s | State: %s | Owner: %s | Latitude: %lf | Longitude: %lf | Kind: %s | Size: %s | Difficulty: %d | Terrain: %d | Status: %s | Hidden Date: %s | Founds: %d | Not Founds: %d | Favourites: %d | Altitude: %lf\n",
+        cache.code, cache.name, cache.state, cache.owner, cache.latitude, cache.longitude,
+        cacheKindToString(cache.kind), cacheSizeToString(cache.size), cache.difficulty,
+        cache.terrain, cacheStatusToString(cache.status), cache.hidden_date, cache.founds,
+        cache.not_founds, cache.favourites, cache.altitude);
 }
 
 float calculateFoundPercentage(Cache cache) {
