@@ -14,20 +14,21 @@ int isDuplicate(Cache *cacheData, int numCachesLoaded, char *code){
     return 0;
 }
 
-void loadCachesFromFile(Cache *cacheData, int *numCachesLoaded, char *fileman) {
-    FILE *file = fopen(fileman, "r");
+void loadCachesFromFile(Cache *cacheData, int *numCachesLoaded, char *filename) {
+    FILE *file = fopen(filename, "r");
     if (file == NULL) {
-        printf("ERROR!! Ficheiro nao encontrado: %s\n", fileman);
+        printf("ERROR!! Ficheiro nao encontrado: %s\n", filename);
         return;
     } else {
-        printf("Ficheiro aberto com sucesso: %s\n", fileman);
+        printf("Ficheiro aberto com sucesso: %s\n", filename);
     }
 
-    // Descarta a primeira linha (nomes dos campos)
-    char temp[100];
+    // Ignora a primeira linha (nomes dos campos)
+    char temp[256];
     fgets(temp, sizeof(temp), file);
 
-    while (fscanf(file, "%s %s %s %s %lf %lf %d %d %d %d %d %s %d %d %d %lf",
+    // Leitura dos dados
+    while (fscanf(file, "%19[^,],%99[^,],%49[^,],%49[^,],%lf,%lf,%d,%d,%d,%d,%d,%19[^,],%d,%d,%d,%lf",
                   cacheData[*numCachesLoaded].code,
                   cacheData[*numCachesLoaded].name,
                   cacheData[*numCachesLoaded].state,
@@ -44,6 +45,8 @@ void loadCachesFromFile(Cache *cacheData, int *numCachesLoaded, char *fileman) {
                   &cacheData[*numCachesLoaded].not_founds,
                   &cacheData[*numCachesLoaded].favourites,
                   &cacheData[*numCachesLoaded].altitude) == 16) {
+
+        (*numCachesLoaded)++;
 
         // Adicione mensagens de depuração
         printf("Loaded cache: %s, %s, %s\n", cacheData[*numCachesLoaded].code,
@@ -125,7 +128,7 @@ void sortCaches(Cache *cacheData, int numCachesLoaded, int criteria){
     }
 }
 
-/*void showCacheCountByState(Cache *cacheData, int numCachesLoaded){
+void showCacheCountByState(Cache *cacheData, int numCachesLoaded){
     // Arrays para armazenar as contagens por distrito e estado
     int countByState[MAX_STATES][2] = {0};
 

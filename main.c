@@ -38,7 +38,7 @@ int main() {
             printf("Enter file name: ");
             scanf("%s", filename);
             loadCachesFromFile(cacheData, &numCachesLoaded, filename);
-        } else if (strcmp(command, "CLEAR") == 0 || strcmp(command, "clear") == 0 || strcmp(command, "2") == 0) {
+      }else if (strcmp(command, "CLEAR") == 0 || strcmp(command, "clear") == 0 || strcmp(command, "2") == 0) {
             clearCacheData(cacheData, &numCachesLoaded);
         } else if (strcmp(command, "QUIT") == 0 || strcmp(command, "quit") == 0 || strcmp(command, "3") == 0) {
             running = 0;

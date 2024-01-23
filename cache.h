@@ -51,7 +51,7 @@ typedef struct {
 /*extern const char *stateNames[MAX_STATES];*/
 
 int isDuplicate(Cache *cacheData, int numCachesLoaded, char *code);
-void loadCachesFromFile(Cache *cacheData, int *numCachesLoaded, char *fileman);
+void loadCachesFromFile(Cache *cacheData, int *numCachesLoaded, char *filemane);
 void clearCacheData(Cache *cacheData, int *numCachesLoaded);
 void displayCache(Cache cache);
 float calculateFoundPercentage(Cache cache);
