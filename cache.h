@@ -48,7 +48,6 @@ typedef struct {
     double altitude;
 } Cache;
 
-/*extern const char *stateNames[MAX_STATES];*/
 
 int isDuplicate(Cache *cacheData, int numCachesLoaded, char *code);
 void loadCachesFromFile(Cache *cacheData, int *numCachesLoaded, char *filemane);
@@ -59,5 +58,9 @@ void displayCacheWithFoundPercentage(Cache cache);
 void sortCaches(Cache *cacheData, int numCachesLoaded, int criteria);
 void showCacheCountByState(Cache *cacheData, int numCachesLoaded);
 void calculateMatrix81(Cache *cacheData, int numCachesLoaded, int matrix81[9][9]);
+
+extern void saveCachesToFile(Cache cacheData[], int numCachesLoaded);
+extern const char *stateNames[];
+
 
 #endif /*CACHE_H*/

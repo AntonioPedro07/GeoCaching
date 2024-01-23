@@ -128,7 +128,7 @@ void sortCaches(Cache *cacheData, int numCachesLoaded, int criteria){
     }
 }
 
-void showCacheCountByState(Cache *cacheData, int numCachesLoaded){
+/*void showCacheCountByState(){
     // Arrays para armazenar as contagens por distrito e estado
     int countByState[MAX_STATES][2] = {0};
 
@@ -148,7 +148,7 @@ void showCacheCountByState(Cache *cacheData, int numCachesLoaded){
     }
 }
 
-int getStateIndex(char *state) {
+int getStateIndex(const char *state) {
     for (int i = 0; i < MAX_STATES; i++) {
         if (strcmp(state, stateNames[i]) == 0) {
             return i;
