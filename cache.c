@@ -2,8 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <locale.h>
+#include <ctype.h>
+#include <math.h>
 #include <windows.h>
 #include "cache.h"
+
+/*Código do LOAD*/
 
 int isDuplicate(Cache *cacheData, int numCachesLoaded, char *code){
     for(int i = 0; i < numCachesLoaded; i++){
@@ -14,50 +18,138 @@ int isDuplicate(Cache *cacheData, int numCachesLoaded, char *code){
     return 0;
 }
 
+void trim(char *str) {
+    int index, i;
+    index = 0;
+
+    // Trim leading white spaces
+    while (str[index] == ' ' || str[index] == '\t' || str[index] == '\n') {
+        index++;
+    }
+    if (index != 0) {
+        i = 0;
+        while (str[i + index] != '\0') {
+            str[i] = str[i + index];
+            i++;
+        }
+        str[i] = '\0';
+    }
+
+    // Trim trailing white spaces
+    i = strlen(str) - 1;
+    while (i >= 0 && (str[i] == ' ' || str[i] == '\t' || str[i] == '\n')) {
+        str[i] = '\0';
+        i--;
+    }
+}
+
 void loadCachesFromFile(Cache *cacheData, int *numCachesLoaded, char *fileman) {
-    FILE *file = fopen(fileman, "r");
+      FILE *file = fopen(fileman, "r");
     if (file == NULL) {
         printf("ERROR!! Ficheiro nao encontrado\n");
         return;
     }
 
-while (fscanf(file, "%19[^,],%99[^,],%49[^,],%49[^,],%lf,%lf,%d,%d,%d,%d,%d,%19[^,],%d,%d,%d,%lf",
-              cacheData[*numCachesLoaded].code,
-              cacheData[*numCachesLoaded].name,
-              cacheData[*numCachesLoaded].state,
-              cacheData[*numCachesLoaded].owner,
-              &cacheData[*numCachesLoaded].latitude,
-              &cacheData[*numCachesLoaded].longitude,
-              (int *)&cacheData[*numCachesLoaded].kind,
-              (int *)&cacheData[*numCachesLoaded].size,
-              &cacheData[*numCachesLoaded].difficulty,
-              &cacheData[*numCachesLoaded].terrain,
-              (int *)&cacheData[*numCachesLoaded].status,
-              cacheData[*numCachesLoaded].hidden_date,
-              &cacheData[*numCachesLoaded].founds,
-              &cacheData[*numCachesLoaded].not_founds,
-              &cacheData[*numCachesLoaded].favourites,
-              &cacheData[*numCachesLoaded].altitude) != EOF) {
-    
-    printf("Loaded: %s\n", cacheData[*numCachesLoaded].code);
- 
-    (*numCachesLoaded)++;
- 
-    if (*numCachesLoaded >= MAX_CACHES) {
-        printf("Limite máximo de capacidade atingido.\n");
-        break;
+    char kindStr[20], sizeStr[20], statusStr[20];
+    int continueReading = 1;
+    char line[1024];
+    int lineNum = 0;
+
+    // Pular a linha do cabeçalho
+    char header[1024];
+    if (fgets(header, sizeof(header), file) == NULL) {
+        printf("Erro ao ler o cabeçalho do arquivo.\n");
+        fclose(file);
+        return;
+    }
+
+   while (*numCachesLoaded < MAX_CACHES && continueReading && fgets(line, sizeof(line), file) != NULL) {
+    lineNum++;
+    trim(line); // Remove espaços extras e caracteres de nova linha
+
+    printf("Linha %d: %s\n", lineNum, line);
+
+    char *token = strtok(line, ";");
+    int fieldCount = 0;
+
+    while (token != NULL) {
+        printf("Campo %d: %s\n", fieldCount + 1, token);
+        switch (fieldCount) {
+            case 0: strcpy(cacheData[*numCachesLoaded].code, token); break;
+            case 1: strcpy(cacheData[*numCachesLoaded].name, token); break;
+            case 2: strcpy(cacheData[*numCachesLoaded].state, token); break;
+            case 3: strcpy(cacheData[*numCachesLoaded].owner, token); break;
+            case 4: cacheData[*numCachesLoaded].latitude = atof(token); break;
+            case 5: cacheData[*numCachesLoaded].longitude = atof(token); break;
+            case 6: cacheData[*numCachesLoaded].kind = stringToCacheKind(token); break;
+            case 7: cacheData[*numCachesLoaded].size = stringToCacheSize(token); break;
+            case 8: cacheData[*numCachesLoaded].difficulty = atoi(token); break;
+            case 9: cacheData[*numCachesLoaded].terrain = atoi(token); break;
+            case 10: cacheData[*numCachesLoaded].status = stringToCacheStatus(token); break;
+            case 11: strcpy(cacheData[*numCachesLoaded].hidden_date, token);break;
+            case 12: cacheData[*numCachesLoaded].founds = atoi(token); break;
+            case 13: cacheData[*numCachesLoaded].not_founds = atoi(token); break;
+            case 14: cacheData[*numCachesLoaded].favourites = atoi(token); break;
+            case 15: cacheData[*numCachesLoaded].altitude = atof(token); break;
+        }
+        token = strtok(NULL, ";");
+        fieldCount++;
+    }
+
+    if (fieldCount != 16) {
+        printf("Falha na leitura da linha %d. Número de campos esperado: 16, obtido: %d\n", lineNum, fieldCount);
+        continueReading = 0; // Interrompe o loop
+    } else {
+        // Processamento normal
+        printf("Loaded: %s\n", cacheData[*numCachesLoaded].code);
+        (*numCachesLoaded)++;
     }
 }
+ 
+    if (*numCachesLoaded >= MAX_CACHES) {
+        printf("Limite máximo de capacidade atingido.\n");  
+    }
 
     fclose(file);
     printf("<%d cache unica carregada>\n", *numCachesLoaded);
 }
 
+CacheKind stringToCacheKind(const char *kindStr) {
+    if (strcmp(kindStr, "EARTHCACHE") == 0) return EARTHCACHE;
+    if (strcmp(kindStr, "LETTERBOX") == 0) return LETTERBOX;
+    if (strcmp(kindStr, "MULTI") == 0) return MULTI;
+    if (strcmp(kindStr, "PUZZLE") == 0) return PUZZLE;
+    if (strcmp(kindStr, "TRADITIONAL") == 0) return TRADITIONAL;
+    if (strcmp(kindStr, "VIRTUAL") == 0) return VIRTUAL;
+    if (strcmp(kindStr, "WEBCAM") == 0) return WEBCAM;
+    return UNKNOWN_KIND; // Um valor enum para representar um tipo desconhecido
+}
+
+CacheSize stringToCacheSize(const char *sizeStr){
+    if (strcmp(sizeStr, "MICRO") == 0) return MICRO;
+    if (strcmp(sizeStr, "SMALL") == 0) return SMALL;
+    if (strcmp(sizeStr, "REGULAR") == 0) return REGULAR;
+    if (strcmp(sizeStr, "LARGE") == 0) return LARGE;
+    if (strcmp(sizeStr, "OTHER_SIZE") == 0) return OTHER_SIZE;
+    if (strcmp(sizeStr, "VIRTUAL_SIZE") == 0) return VIRTUAL_SIZE;
+    if (strcmp(sizeStr, "NOT_CHOSEN_SIZE") == 0) return NOT_CHOSEN_SIZE;
+    return UNKNOWN_SIZE; // Um valor enum para representar um tipo desconhecido
+}
+
+CacheStatus stringToCacheStatus(const char *statusStr){
+    if (strcmp(statusStr, "AVAILABLE") == 0) return AVAILABLE;
+    if (strcmp(statusStr, "DISABLED") == 0) return DISABLED;
+    return UNKNOWN_STATUS; // Um valor enum para representar um tipo desconhecido
+}
+
+/*Clear Data*/
 
 void clearCacheData(Cache *cacheData, int *numCachesLoaded){
     *numCachesLoaded = 0;
     printf("Data cache limpa.\n");
 }
+
+/*Display List*/
 
 const char* cacheKindToString(CacheKind kind) {
     switch (kind) {
@@ -115,6 +207,8 @@ void displayCache(Cache cache) {
         cache.not_founds, cache.favourites, cache.altitude);
 }
 
+/*Display List FoundP*/
+
 float calculateFoundPercentage(Cache cache) {
     if (cache.founds + cache.not_founds == 0) {
         return 0.0;
@@ -122,12 +216,160 @@ float calculateFoundPercentage(Cache cache) {
     return ((float)cache.founds / (cache.founds + cache.not_founds)) * 100.0;
 }
 
-// Função para exibir as informações de uma única cache com a percentagem de encontrados
+
 void displayCacheWithFoundPercentage(Cache cache) {
     float foundPercentage = calculateFoundPercentage(cache);
     printf("%.2f%% | Code: %s | Name: %s | State: %s | Owner: %s | ... | Favourites: %d | Altitude: %lf\n",
         foundPercentage, cache.code, cache.name, cache.state, cache.owner, cache.favourites, cache.altitude);
 }
+
+/*Search*/
+
+void searchCache(Cache *cacheData, int numCachesLoaded, const char *searchCode) {
+    int found = 0;
+ 
+    for (int i = 0; i < numCachesLoaded; i++) {
+        if (strcmp(cacheData[i].code, searchCode) == 0) {
+            // Cache encontrada, exibe informações
+            displayCache(cacheData[i]);
+            found = 1;
+            break;
+        }
+    }
+ 
+    if (!found) {
+        // Cache não encontrada
+        printf("<Cache not found>\n");
+    }
+}
+
+/*Edit*/
+
+/*void editCache(Cache *cacheData, int numCachesLoaded, const char *editCode) {
+    int foundIndex = -1;
+ 
+    // Procura pela cache com base no código fornecido
+    for (int i = 0; i < numCachesLoaded; i++) {
+        if (strcmp(cacheData[i].code, editCode) == 0) {
+            foundIndex = i;
+            break;
+        }
+    }
+ 
+    if (foundIndex != -1) {
+        // Cache encontrada, permite ao usuário editar informações específicas
+        char newOwner[50];
+        char newStatus[50];
+        char newHiddenDate[11];
+        double newAltitude;
+ 
+        printf("Enter new owner (or press Enter to keep current): ");
+        getchar(); // Consumir o caractere de nova linha pendente
+        fgets(newOwner, sizeof(newOwner), stdin);
+        newOwner[strcspn(newOwner, "\n")] = '\0'; // Remover o caractere de nova linha, se presente
+ 
+        printf("Enter new status (or press Enter to keep current): ");
+        fgets(newStatus, sizeof(newStatus), stdin);
+        newStatus[strcspn(newStatus, "\n")] = '\0'; // Remover o caractere de nova linha, se presente
+ 
+        printf("Enter new hidden date (yyyy/mm/dd) (or press Enter to keep current): ");
+        fgets(newHiddenDate, sizeof(newHiddenDate), stdin);
+        newHiddenDate[strcspn(newHiddenDate, "\n")] = '\0'; // Remover o caractere de nova linha, se presente
+ 
+        printf("Enter new altitude (or press Enter to keep current): ");
+        scanf("%lf", &newAltitude);
+ 
+        // Atualiza as informações editadas na cache
+        if (strlen(newOwner) > 0) {
+            strcpy(cacheData[foundIndex].owner, newOwner);
+        }
+        if (strlen(newStatus) > 0) {
+            strcpy(cacheData[foundIndex].status, newStatus);
+        }
+        if (strlen(newHiddenDate) > 0) {
+            strcpy(cacheData[foundIndex].hidden_date, newHiddenDate);
+        }
+        if (newAltitude != 0.0) {
+            cacheData[foundIndex].altitude = newAltitude;
+        }
+ 
+        printf("<Cache information edited>\n");
+    } else {
+        // Cache não encontrada
+        printf("<Cache not found>\n");
+    }
+}*/
+
+/*Center*/
+
+void calculateCenterStatistics(Cache *cacheData, int numCachesLoaded) {
+    int validCaches = 0;
+    double sumLatitudes = 0.0, sumLongitudes = 0.0;
+    double sumLatitudesSquared = 0.0, sumLongitudesSquared = 0.0;
+ 
+    for (int i = 0; i < numCachesLoaded; i++) {
+        if (cacheData[i].altitude != -9999999) {
+            // A cache tem uma altitude válida, inclui-a nos cálculos
+            validCaches++;
+            sumLatitudes += cacheData[i].latitude;
+            sumLongitudes += cacheData[i].longitude;
+            sumLatitudesSquared += pow(cacheData[i].latitude, 2);
+            sumLongitudesSquared += pow(cacheData[i].longitude, 2);
+        }
+    }
+ 
+    if (validCaches > 0) {
+        // Calcula a média das latitudes e longitudes
+        double meanLatitude = sumLatitudes / validCaches;
+        double meanLongitude = sumLongitudes / validCaches;
+ 
+        // Calcula o desvio padrão das latitudes e longitudes
+        double stdDevLatitude = sqrt((sumLatitudesSquared / validCaches) - pow(meanLatitude, 2));
+        double stdDevLongitude = sqrt((sumLongitudesSquared / validCaches) - pow(meanLongitude, 2));
+ 
+        printf("Center Statistics:\n");
+        printf("Latitude: Mean=%.6lf, StdDev=%.6lf\n", meanLatitude, stdDevLatitude);
+        printf("Longitude: Mean=%.6lf, StdDev=%.6lf\n", meanLongitude, stdDevLongitude);
+    } else {
+        printf("<No valid caches for center statistics>\n");
+    }
+}
+
+/*Age*/
+
+/*void calculateCacheAge(Cache *cacheData, int numCachesLoaded) {
+    if (numCachesLoaded == 0) {
+        printf("<No cache data>\n");
+        return;
+    }
+ 
+    // Converte a data da primeira cache para a estrutura tm
+    struct tm oldestDate;
+    sscanf(cacheData[0].hidden_date, "%4d/%2d/%2d", &oldestDate.tm_year, &oldestDate.tm_mon, &oldestDate.tm_mday);
+    oldestDate.tm_year -= 1900;  // tm_year conta a partir de 1900
+    oldestDate.tm_mon -= 1;      // tm_mon é baseado em zero (0 = janeiro)
+ 
+    // Converte a data da última cache para a estrutura tm
+    struct tm newestDate;
+    sscanf(cacheData[numCachesLoaded - 1].hidden_date, "%4d/%2d/%2d", &newestDate.tm_year, &newestDate.tm_mon, &newestDate.tm_mday);
+    newestDate.tm_year -= 1900;  // tm_year conta a partir de 1900
+    newestDate.tm_mon -= 1;      // tm_mon é baseado em zero (0 = janeiro)
+ 
+    time_t oldestTime = mktime(&oldestDate);
+    time_t newestTime = mktime(&newestDate);
+ 
+    // Calcula a diferença em segundos entre as duas datas
+    time_t timeDifference = difftime(newestTime, oldestTime);
+ 
+    // Converte a diferença em meses
+    int monthsDifference = (int)(timeDifference / (30 * 24 * 60 * 60));  // Aproximadamente 30 dias por mês
+ 
+    printf("Oldest Cache: %s\n", cacheData[0].name);
+    printf("Newest Cache: %s\n", cacheData[numCachesLoaded - 1].name);
+    printf("Age Difference: %d months\n", monthsDifference);
+}*/
+
+/*Sort*/
 
 int compareByAltitude(const void *a, const void *b){
     return (*(Cache *)b).altitude - (*(Cache *)a).altitude;
@@ -164,16 +406,48 @@ void sortCaches(Cache *cacheData, int numCachesLoaded, int criteria){
     }
 }
 
-/*void showCacheCountByState(){
+void printCaches(const Cache *cacheData, int numCaches) {
+    // Função para imprimir a lista de caches
+    printf("Lista de Caches:\n");
+    for (int i = 0; i < numCaches; i++) {
+        printf("Cache %d:\n", i + 1);
+        printf("Code: %s\n", cacheData[i].code);
+        printf("Name: %s\n", cacheData[i].name);
+        printf("State: %s\n", cacheData[i].state);
+        printf("Owner: %s\n", cacheData[i].owner);
+        printf("Latitude: %f\n", cacheData[i].latitude);
+        printf("Longitude: %f\n", cacheData[i].longitude);
+        // Aqui você pode imprimir mais informações conforme necessário
+        printf("Altitude: %f\n", cacheData[i].altitude);
+        printf("Hidden Date: %s\n", cacheData[i].hidden_date);
+        printf("Founds: %d\n", cacheData[i].founds);
+        printf("Not Founds: %d\n", cacheData[i].not_founds);
+        printf("Favourites: %d\n\n", cacheData[i].favourites);
+    }
+}
+
+/*State*/
+
+int getStateIndex(const char *state) {
+    for (int i = 0; i < MAX_STATES; i++) {
+        if (strcmp(state, stateNames[i]) == 0) {
+            return i;
+        }
+    }
+    return -1; // Retorna -1 se o estado não for encontrado
+}
+
+void showCacheCountByState(Cache *cacheData, int numCachesLoaded){
     // Arrays para armazenar as contagens por distrito e estado
     int countByState[MAX_STATES][2] = {0};
 
     for (int i = 0; i < numCachesLoaded; i++) {
         int stateIndex = getStateIndex(cacheData[i].state);
+        printf("Cache %d: State Index = %d, Status = %d\n", i, stateIndex, cacheData[i].status);
 
-        if (stateIndex != -1) {
+        if (stateIndex >= 0 && stateIndex < MAX_STATES && cacheData[i].status >= 0 && cacheData[i].status <= DISABLED) {
             // Incrementa a contagem correspondente ao distrito e estado da cache
-            countByState[stateIndex][cacheData[i].status]++; 
+            countByState[stateIndex][cacheData[i].status]++;
         }
     }
 
@@ -184,26 +458,28 @@ void sortCaches(Cache *cacheData, int numCachesLoaded, int criteria){
     }
 }
 
-int getStateIndex(const char *state) {
-    for (int i = 0; i < MAX_STATES; i++) {
-        if (strcmp(state, stateNames[i]) == 0) {
-            return i;
-        }
-    }
-    return -1; // Retorna -1 se o estado não for encontrado
-}*/
+/*Matrix 81*/
 
 void calculateMatrix81(Cache *cacheData, int numCachesLoaded, int matrix81[9][9]) {
-    for (int i = 0; i < numCachesLoaded; i++) {
-        int terrainIndex = (int)cacheData[i].terrain - 1; // Indices de 0 a 4
-        int difficultyIndex = (int)cacheData[i].difficulty - 1; // Indices de 0 a 4
+    // Inicializa a matriz com 0s
+    for (int i = 0; i < 9; i++) {
+        for (int j = 0; j < 9; j++) {
+            matrix81[i][j] = 0;
+        }
+    }
 
-        // Incrementa a contagem para a combinação de terreno/dificuldade
-        matrix81[terrainIndex][difficultyIndex]++;
+    for (int i = 0; i < numCachesLoaded; i++) {
+        if (cacheData[i].terrain >= 1 && cacheData[i].terrain <= 9 &&
+            cacheData[i].difficulty >= 1 && cacheData[i].difficulty <= 9) {
+            int terrainIndex = (int)cacheData[i].terrain - 1;
+            int difficultyIndex = (int)cacheData[i].difficulty - 1;
+
+            // Incrementa a contagem para a combinação de terreno/dificuldade
+            matrix81[terrainIndex][difficultyIndex]++;
+        }
     }
 }
 
-// Função para imprimir a matriz 81
 void printMatrix81(int matrix81[9][9]) {
     printf("Matrix 81:\n");
     for (int i = 0; i < 9; i++) {
@@ -214,7 +490,8 @@ void printMatrix81(int matrix81[9][9]) {
     }
 }
 
-// Função para verificar se um ficheiro já existe
+/*Save*/
+
 int fileExists(const char *filename) {
     FILE *file = fopen(filename, "r");
     if (file != NULL) {
@@ -224,33 +501,52 @@ int fileExists(const char *filename) {
     return 0; // Retorna falso se o ficheiro não existe
 }
 
-// Função para salvar as caches em formato CSV
 void saveCachesToFile(Cache *cacheData, int numCachesLoaded) {
     char filename[50];
-
-    // Solicita ao utilizador o nome do ficheiro
     printf("Enter the filename for saving: ");
     scanf("%s", filename);
 
-    // Verifica se o ficheiro já existe
     if (fileExists(filename)) {
         printf("File '%s' already exists. Save operation aborted.\n", filename);
         return;
     }
 
-    // Abre o ficheiro para escrita
     FILE *file = fopen(filename, "w");
-    if (file == NULL) {
-        printf("Error opening file for writing.\n");
+    if (!file) {
+        perror("Error opening file for writing");
         return;
     }
 
-    // Escreve as informações das caches no ficheiro CSV
+    printf("Saving %d caches to file '%s'.\n", numCachesLoaded, filename);
+
     for (int i = 0; i < numCachesLoaded; i++) {
-        fprintf(file, "%s,%s,%s,%s,%lf\n", cacheData[i].code, cacheData[i].owner, cacheData[i].status,
-                cacheData[i].hidden_date, cacheData[i].altitude);
+        if (fprintf(file, "%s,%s,%s,%s,%s,%s,%.2lf,%.2lf,%d,%s,%d,%d,%d,%.2lf\n", 
+                    cacheData[i].code, 
+                    cacheData[i].owner,
+                    cacheData[i].latitude,
+                    cacheData[i].longitude,
+                    cacheData[i].kind,
+                    cacheData[i].size,
+                    cacheData[i].difficulty,
+                    cacheData[i].terrain,
+                    cacheData[i].status, 
+                    cacheData[i].hidden_date,
+                    cacheData[i].founds,
+                    cacheData[i].not_founds,
+                    cacheData[i].favourites, 
+                    cacheData[i].altitude) < 0) {
+            perror("Error writing to file");
+            break;
+        }
+        printf("Cache %d written successfully: %s\n", i, cacheData[i].code);
+    
+        // Imprime cada linha que deveria ser escrita no arquivo para depuração
+        printf("Cache %d saved: %s\n", i, cacheData[i].code);
     }
 
-    fclose(file);
+    if (fclose(file) != 0) {
+        perror("Error closing file");
+    }
+
     printf("Caches saved to '%s' successfully.\n", filename);
 }

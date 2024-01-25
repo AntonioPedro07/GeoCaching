@@ -2,7 +2,7 @@
 #define CACHE_H
 
 #define MAX_CACHES 2000
-#define MAX_STATES 20
+#define MAX_STATES 2
 
 typedef enum {
     EARTHCACHE,
@@ -11,7 +11,8 @@ typedef enum {
     PUZZLE,
     TRADITIONAL,
     VIRTUAL,
-    WEBCAM
+    WEBCAM,
+    UNKNOWN_KIND
 } CacheKind;
 
 typedef enum {
@@ -21,12 +22,14 @@ typedef enum {
     LARGE,
     OTHER_SIZE,
     VIRTUAL_SIZE,
-    NOT_CHOSEN_SIZE
+    NOT_CHOSEN_SIZE,
+    UNKNOWN_SIZE
 } CacheSize;
 
 typedef enum {
     AVAILABLE,
-    DISABLED
+    DISABLED,
+    UNKNOWN_STATUS
 } CacheStatus;
 
 typedef struct {
@@ -48,21 +51,40 @@ typedef struct {
     double altitude;
 } Cache;
 
-
+//Load
 int isDuplicate(Cache *cacheData, int numCachesLoaded, char *code);
 void loadCachesFromFile(Cache *cacheData, int *numCachesLoaded, char *filemane);
+
+//Clear
 void clearCacheData(Cache *cacheData, int *numCachesLoaded);
+
+//List
 void displayCache(Cache cache);
+
+//FoundP
 float calculateFoundPercentage(Cache cache);
 void displayCacheWithFoundPercentage(Cache cache);
+
+//Sort
 void sortCaches(Cache *cacheData, int numCachesLoaded, int criteria);
+void printCaches(const Cache *cacheData, int numCaches);
+
+//State
 void showCacheCountByState(Cache *cacheData, int numCachesLoaded);
+
+//Matrix 81
 void calculateMatrix81(Cache *cacheData, int numCachesLoaded, int matrix81[9][9]);
+void printMatrix81(int matrix81[9][9]);
 
 extern void saveCachesToFile(Cache cacheData[], int numCachesLoaded);
+
+
 extern const char *stateNames[];
 const char* cacheSizeToString(CacheSize size);
 const char* cacheStatusToString(CacheStatus status);
 
+CacheKind stringToCacheKind(const char *kindStr);
+CacheSize stringToCacheSize(const char *sizeStr);
+CacheStatus stringToCacheStatus(const char *statusStr);
 
 #endif /*CACHE_H*/
