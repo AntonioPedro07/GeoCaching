@@ -65,6 +65,19 @@ void displayCache(Cache cache);
 float calculateFoundPercentage(Cache cache);
 void displayCacheWithFoundPercentage(Cache cache);
 
+//Search
+void searchCache(Cache *cacheData, int numCachesLoaded, const char *searchCode);
+void displaySearchCache(Cache cache);
+
+//Center
+void calculateCenterStatistics(Cache *cacheData, int numCachesLoaded);
+
+//Age
+void calculateCacheAge(Cache *cacheData, int numCachesLoaded);
+
+//Edit
+void editCache(Cache *cacheData, int numCachesLoaded);
+
 //Sort
 void sortCaches(Cache *cacheData, int numCachesLoaded, int criteria);
 void printCaches(const Cache *cacheData, int numCaches);

@@ -12,6 +12,9 @@ int main() {
     int running = 1;
     char command[20];
     int matrix81[9][9];
+    char editCode[20];
+    char searchCode[20];
+
 
     while (running) {
         printf("\n\t\t ============== Geo Caching ==============");
@@ -70,13 +73,16 @@ int main() {
             printf("------------------------------------------------------------\n");
         }
         } else if (strcmp(command, "SEARCH") == 0 || strcmp(command, "search") == 0 || strcmp(command, "6") == 0) {
-            // Implementar lógica para o comando SEARCH
+            printf("Enter the cache code to search: ");
+            scanf("%s", searchCode);
+
+            searchCache(cacheData, numCachesLoaded, searchCode);
         } else if (strcmp(command, "EDIT") == 0 || strcmp(command, "edit") == 0 || strcmp(command, "7") == 0) {
-            // Implementar lógica para o comando EDIT
+            editCache(cacheData, numCachesLoaded);
         } else if (strcmp(command, "CENTER") == 0 || strcmp(command, "center") == 0 || strcmp(command, "8") == 0) {
-            // Implementar lógica para o comando CENTER
+            calculateCenterStatistics(cacheData, numCachesLoaded);
         } else if (strcmp(command, "AGE") == 0 || strcmp(command, "age") == 0 || strcmp(command, "9") == 0) {
-            // Implementar lógica para o comando AGE
+            calculateCacheAge(cacheData, numCachesLoaded);
         } else if (strcmp(command, "SORT") == 0 || strcmp(command, "sort") == 0 || strcmp(command, "10") == 0) {
             int sortCriteria;
             printf("\nEnter sorting criteria (1-Altitude, 2-State, 3-Hidden Date): ");

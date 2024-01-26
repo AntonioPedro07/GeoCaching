@@ -5,6 +5,7 @@
 #include <ctype.h>
 #include <math.h>
 #include <windows.h>
+#include <time.h>
 #include "cache.h"
 
 /*Código do LOAD*/
@@ -216,7 +217,6 @@ float calculateFoundPercentage(Cache cache) {
     return ((float)cache.founds / (cache.founds + cache.not_founds)) * 100.0;
 }
 
-
 void displayCacheWithFoundPercentage(Cache cache) {
     float foundPercentage = calculateFoundPercentage(cache);
     printf("%.2f%% | Code: %s | Name: %s | State: %s | Owner: %s | ... | Favourites: %d | Altitude: %lf\n",
@@ -225,18 +225,38 @@ void displayCacheWithFoundPercentage(Cache cache) {
 
 /*Search*/
 
+void displaySearchCache(Cache cache){
+    printf("\nCache Details:\n");
+    printf("Code: %s\n", cache.code);
+    printf("Name: %s\n", cache.name);
+    printf("State: %s\n", cache.state);
+    printf("Owner: %s\n", cache.owner);
+    printf("Latitude: %.2f\n", cache.latitude);
+    printf("Longitude: %.2f\n", cache.longitude);
+    printf("Kind: %s\n", cacheKindToString(cache.kind));
+    printf("Size: %s\n", cacheSizeToString(cache.size));
+    printf("Difficulty: %d\n", cache.difficulty);
+    printf("Terrain: %d\n", cache.terrain);
+    printf("Status: %s\n", cacheStatusToString(cache.status));
+    printf("Hidden Date: %s\n", cache.hidden_date);
+    printf("Founds: %d\n", cache.founds);
+    printf("Not Founds: %d\n", cache.not_founds);
+    printf("Favourites: %d\n", cache.favourites);
+    printf("Altitude: %.2f\n", cache.altitude);
+}
+
 void searchCache(Cache *cacheData, int numCachesLoaded, const char *searchCode) {
     int found = 0;
  
     for (int i = 0; i < numCachesLoaded; i++) {
         if (strcmp(cacheData[i].code, searchCode) == 0) {
             // Cache encontrada, exibe informações
-            displayCache(cacheData[i]);
+            displaySearchCache(cacheData[i]);
             found = 1;
             break;
         }
     }
- 
+    
     if (!found) {
         // Cache não encontrada
         printf("<Cache not found>\n");
@@ -245,9 +265,34 @@ void searchCache(Cache *cacheData, int numCachesLoaded, const char *searchCode) 
 
 /*Edit*/
 
-/*void editCache(Cache *cacheData, int numCachesLoaded, const char *editCode) {
+void printCacheDetails(const Cache *cache) {
+    printf("\nCache Details:\n");
+    printf("Code: %s\n", cache->code);
+    printf("Name: %s\n", cache->name);
+    printf("State: %s\n", cache->state);
+    printf("Owner: %s\n", cache->owner);
+    printf("Latitude: %.2f\n", cache->latitude);
+    printf("Longitude: %.2f\n", cache->longitude);
+    printf("Kind: %s\n", cacheKindToString(cache->kind));
+    printf("Size: %s\n", cacheSizeToString(cache->size));
+    printf("Difficulty: %d\n", cache->difficulty);
+    printf("Terrain: %d\n", cache->terrain);
+    printf("Status: %s\n", cacheStatusToString(cache->status)); // Conversão de enum para string 
+    printf("Hidden Date: %s\n", cache->hidden_date);
+    printf("Founds: %d\n", cache->founds);
+    printf("Not Founds: %d\n", cache->not_founds);
+    printf("Favourites: %d\n", cache->favourites);
+    printf("Altitude: %.2f\n", cache->altitude);
+}
+
+void editCache(Cache *cacheData, int numCachesLoaded) {
+    char editCode[20];
+    printf("\nEnter the cache code you want to edit: ");
+    scanf("%s", editCode);
+    
     int foundIndex = -1;
- 
+    int continueEditing = 1; // Inicia com 1 para entrar no loop pelo menos uma vez
+
     // Procura pela cache com base no código fornecido
     for (int i = 0; i < numCachesLoaded; i++) {
         if (strcmp(cacheData[i].code, editCode) == 0) {
@@ -255,50 +300,83 @@ void searchCache(Cache *cacheData, int numCachesLoaded, const char *searchCode) 
             break;
         }
     }
- 
-    if (foundIndex != -1) {
-        // Cache encontrada, permite ao usuário editar informações específicas
-        char newOwner[50];
-        char newStatus[50];
-        char newHiddenDate[11];
-        double newAltitude;
- 
-        printf("Enter new owner (or press Enter to keep current): ");
-        getchar(); // Consumir o caractere de nova linha pendente
-        fgets(newOwner, sizeof(newOwner), stdin);
-        newOwner[strcspn(newOwner, "\n")] = '\0'; // Remover o caractere de nova linha, se presente
- 
-        printf("Enter new status (or press Enter to keep current): ");
-        fgets(newStatus, sizeof(newStatus), stdin);
-        newStatus[strcspn(newStatus, "\n")] = '\0'; // Remover o caractere de nova linha, se presente
- 
-        printf("Enter new hidden date (yyyy/mm/dd) (or press Enter to keep current): ");
-        fgets(newHiddenDate, sizeof(newHiddenDate), stdin);
-        newHiddenDate[strcspn(newHiddenDate, "\n")] = '\0'; // Remover o caractere de nova linha, se presente
- 
-        printf("Enter new altitude (or press Enter to keep current): ");
-        scanf("%lf", &newAltitude);
- 
-        // Atualiza as informações editadas na cache
-        if (strlen(newOwner) > 0) {
-            strcpy(cacheData[foundIndex].owner, newOwner);
-        }
-        if (strlen(newStatus) > 0) {
-            strcpy(cacheData[foundIndex].status, newStatus);
-        }
-        if (strlen(newHiddenDate) > 0) {
-            strcpy(cacheData[foundIndex].hidden_date, newHiddenDate);
-        }
-        if (newAltitude != 0.0) {
-            cacheData[foundIndex].altitude = newAltitude;
-        }
- 
-        printf("<Cache information edited>\n");
-    } else {
-        // Cache não encontrada
+
+    if (foundIndex == -1) {
         printf("<Cache not found>\n");
+        return;
     }
-}*/
+
+   // Simula um processo de "loading"
+     printf("Loading cache data...\n");
+    for (int i = 0; i < 3; i++) {
+        printf(".");
+        fflush(stdout); // Força a saída do buffer de printf
+        Sleep(1000); // Espera 1000 milissegundos (1 segundo)
+    }
+    printf("\n");
+
+    int choice;
+    do {
+        printf("\n\nEdit Cache - Choose an option:\n");
+        printf("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n");
+        printf("1. Owner\n");
+        printf("2. Status\n");
+        printf("3. Hidden Date\n");
+        printf("4. Altitude\n");
+        printf("5. Exit\n");
+        printf("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+        getchar(); // Consumir o caractere de nova linha pendente
+
+        char input[50];
+        switch (choice) {
+            case 1: // Owner
+                printf("\nEnter new owner: ");
+                fgets(input, sizeof(input), stdin);
+                input[strcspn(input, "\n")] = '\0';
+                if (strlen(input) > 0) {
+                    strcpy(cacheData[foundIndex].owner, input);
+                }
+                break;
+            case 2: // Status
+                printf("\nEnter new status: ");
+                fgets(input, sizeof(input), stdin);
+                input[strcspn(input, "\n")] = '\0';
+                if (strlen(input) > 0) {
+                    CacheStatus newStatus = stringToCacheStatus(input);
+                    cacheData[foundIndex].status = newStatus;
+                }
+                break;
+            case 3: // Hidden Date
+                printf("\nEnter new hidden date (yyyy/mm/dd): ");
+                fgets(input, sizeof(input), stdin);
+                input[strcspn(input, "\n")] = '\0';
+                if (strlen(input) > 0) {
+                    strcpy(cacheData[foundIndex].hidden_date, input);
+                }
+                break;
+            case 4: // Altitude
+                printf("\nEnter new altitude: ");
+                fgets(input, sizeof(input), stdin);
+                input[strcspn(input, "\n")] = '\0';
+                if (strlen(input) > 0) {
+                    double newAltitude = atof(input);
+                    cacheData[foundIndex].altitude = newAltitude;
+                }
+                break;
+        }
+
+        // Após a edição, imprime os detalhes da cache
+        printCacheDetails(&cacheData[foundIndex]);
+
+        printf("\nDo you want to edit more fields? (1 for Yes, 0 for No): ");
+        scanf("%d", &continueEditing);
+        getchar(); // Consumir o caractere de nova linha pendente
+    } while (choice != 5 && continueEditing != 0);
+
+    printf("<Cache information edited>\n");
+}
 
 /*Center*/
 
@@ -327,9 +405,9 @@ void calculateCenterStatistics(Cache *cacheData, int numCachesLoaded) {
         double stdDevLatitude = sqrt((sumLatitudesSquared / validCaches) - pow(meanLatitude, 2));
         double stdDevLongitude = sqrt((sumLongitudesSquared / validCaches) - pow(meanLongitude, 2));
  
-        printf("Center Statistics:\n");
-        printf("Latitude: Mean=%.6lf, StdDev=%.6lf\n", meanLatitude, stdDevLatitude);
-        printf("Longitude: Mean=%.6lf, StdDev=%.6lf\n", meanLongitude, stdDevLongitude);
+        printf("\nCenter Statistics:\n");
+        printf("Latitude: Mean= %.6lf, StdDev= %.6lf\n", meanLatitude, stdDevLatitude);
+        printf("Longitude: Mean= %.6lf, StdDev= %.6lf\n", meanLongitude, stdDevLongitude);
     } else {
         printf("<No valid caches for center statistics>\n");
     }
@@ -337,7 +415,7 @@ void calculateCenterStatistics(Cache *cacheData, int numCachesLoaded) {
 
 /*Age*/
 
-/*void calculateCacheAge(Cache *cacheData, int numCachesLoaded) {
+void calculateCacheAge(Cache *cacheData, int numCachesLoaded) {
     if (numCachesLoaded == 0) {
         printf("<No cache data>\n");
         return;
@@ -367,7 +445,7 @@ void calculateCenterStatistics(Cache *cacheData, int numCachesLoaded) {
     printf("Oldest Cache: %s\n", cacheData[0].name);
     printf("Newest Cache: %s\n", cacheData[numCachesLoaded - 1].name);
     printf("Age Difference: %d months\n", monthsDifference);
-}*/
+}
 
 /*Sort*/
 
@@ -503,7 +581,7 @@ int fileExists(const char *filename) {
 
 void saveCachesToFile(Cache *cacheData, int numCachesLoaded) {
     char filename[50];
-    printf("Enter the filename for saving: ");
+    printf("\nEnter the filename for saving: ");
     scanf("%s", filename);
 
     if (fileExists(filename)) {
@@ -520,6 +598,7 @@ void saveCachesToFile(Cache *cacheData, int numCachesLoaded) {
     printf("Saving %d caches to file '%s'.\n", numCachesLoaded, filename);
 
     for (int i = 0; i < numCachesLoaded; i++) {
+        printf("Writing cache %d: %s\n", i, cacheData[i].code);
         if (fprintf(file, "%s,%s,%s,%s,%s,%s,%.2lf,%.2lf,%d,%s,%d,%d,%d,%.2lf\n", 
                     cacheData[i].code, 
                     cacheData[i].owner,
@@ -533,19 +612,18 @@ void saveCachesToFile(Cache *cacheData, int numCachesLoaded) {
                     cacheData[i].hidden_date,
                     cacheData[i].founds,
                     cacheData[i].not_founds,
-                    cacheData[i].favourites, 
+                    cacheData[i].favourites,
                     cacheData[i].altitude) < 0) {
             perror("Error writing to file");
             break;
         }
         printf("Cache %d written successfully: %s\n", i, cacheData[i].code);
-    
-        // Imprime cada linha que deveria ser escrita no arquivo para depuração
-        printf("Cache %d saved: %s\n", i, cacheData[i].code);
     }
 
     if (fclose(file) != 0) {
         perror("Error closing file");
+    } else {
+        printf("File closed successfully.\n");
     }
 
     printf("Caches saved to '%s' successfully.\n", filename);
